@@ -4,7 +4,7 @@
   "description": "Node.js complete guide by building veda backend using express, mongoose and other libraries/npm packages/frameworks...",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "repository": {
     "type": "git",
