@@ -2,6 +2,7 @@
   "name": "veda-backend2",
   "version": "1.0.0",
   "description": "Node.js complete guide by building veda backend using express, mongoose and other libraries/npm packages/frameworks...",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
