@@ -1,11 +1,11 @@
 ## Version 1.0
 
 - UserAuth
-- post /api/v1/user/admin ( createAdminUser )
-- get /api/v1/user/login ( loginUser )
-- post /api/v1/user/refreshToken ( reGenerateAccessToken )
-- get /api/v1/user/logout ( verifyUser, logoutUser )
-- put /api/v1/user/change-password ( verifyUser, chnagePassword )
+- post /api/v1/auth/createAdmin ( createAdminUser )
+- post /api/v1/auth/login ( loginUser )
+- post /api/v1/auth/refreshToken ( reGenerateAccessToken )
+- get /api/v1/auth/logout ( verifyUser, logoutUser )
+- put /api/v1/auth/change-password ( verifyUser, chnagePassword )
 
 - Patient
 - post /api/v1/admin/patient ( isAdmin, verifyUser, createPatient )
