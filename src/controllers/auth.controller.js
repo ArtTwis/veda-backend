@@ -136,3 +136,5 @@ export const createAdminUser = async (req, res) => {
       )
     );
 };
+
+export const loginUser = async (req, res) => {};
