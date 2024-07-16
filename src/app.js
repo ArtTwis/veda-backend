@@ -1,6 +1,8 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import morgan from "morgan";
+import helmet from "helmet";
 import ApiError from "./utils/ApiError.js";
 
 const app = express();
@@ -27,21 +29,36 @@ app.use(
   })
 );
 
+// middleware to secure Express apps by setting HTTP response headers.
+app.use(helmet());
+
+// middleware for HTTP request logger.
+app.use(morgan("combined"));
+
 app.use(express.static("public"));
 
 app.use(cookieParser());
 
+/*==============
+=====Routes=====
+==============*/
+
+import userAuthRouter from "./routes/auth.routes.js";
+
+app.use(`/api/${process.env.API_VERSION}/auth`, userAuthRouter);
+
 //  Handle invalid request
-app.use((err, req, res) => {
-  res.status(404).json(
+app.use((err, req, res, next) => {
+  return res.status(404).json(
     new ApiError(
       404,
       {
         success: false,
+        requestedURL: req.req.originalUrl,
         message:
-          "Uh-oh! It seems you've wandered off course. Let's steer you back to safety",
+          "\nUh-oh! It seems you've wandered off course. Let's steer you back to safety",
       },
-      "Uh-oh! It seems you've wandered off course. Let's steer you back to safety",
+      "\nUh-oh! It seems you've wandered off course. Let's steer you back to safety",
       err
     )
   );
