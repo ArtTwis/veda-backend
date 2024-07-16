@@ -13,12 +13,12 @@ const UserAuthSchema = new mongoose.Schema(
       lowercase: true,
       index: true,
     },
-    hash: {
+    password: {
       type: String,
       required: [true, "User password must required!!"],
     },
     refreshToken: {
-      type: string,
+      type: String,
       required: false,
       default: null,
     },
@@ -30,7 +30,7 @@ const UserAuthSchema = new mongoose.Schema(
 
 UserAuthSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.hash = await bcrypt.hash(this.password, SALT);
+    this.password = await bcrypt.hash(this.password, SALT);
   }
   next();
 });
@@ -65,4 +65,4 @@ UserAuthSchema.methods.generateRefreshToken = async function () {
   );
 };
 
-export default UserAuth = mongoose.model("UserAuth", UserAuthSchema);
+export const UserAuth = mongoose.model("UserAuth", UserAuthSchema);
