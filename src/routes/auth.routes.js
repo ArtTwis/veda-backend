@@ -14,6 +14,11 @@ router
     createAdminUser
   );
 
-router.route("/login").post([], loginUser);
+router
+  .route("/login")
+  .post(
+    [body("email").trim().isEmail(), body("password").trim().notEmpty()],
+    loginUser
+  );
 
 export default router;

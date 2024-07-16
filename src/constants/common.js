@@ -14,8 +14,11 @@ export const errorMessages = {
   emailAlreadyExist: "User with email already exist!",
   internalServerError:
     "The server encountered an internal error or misconfiguration and was unable to complete your request.",
+  userDoesNotExist: "User does not exist! Please check email address..",
+  invalidCredential: "Invalid user credentials! try again..",
 };
 
 export const successMessages = {
   adminCreatedSuccessfully: "Admin user has been successfully created..",
+  userLoggedIn: "User loggedIn successfully..",
 };
