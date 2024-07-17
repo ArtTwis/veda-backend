@@ -27,7 +27,7 @@ const generateAccessAndRefreshToken = asyncHandler(
 
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new ApiError(500, null, error, error);
+      return res.status(500).json(new ApiError(500, error));
     }
   }
 );
@@ -37,7 +37,9 @@ export const createAdminUser = asyncHandler(async (req, res) => {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
-      throw new ApiError(422, null, errorMessages.invalidInput, result.array());
+      return res
+        .status(422)
+        .json(new ApiError(422, errorMessages.invalidInput));
     }
 
     const {
@@ -71,32 +73,21 @@ export const createAdminUser = asyncHandler(async (req, res) => {
         addressState,
       ].some((field) => field?.trim() === "")
     ) {
-      throw new ApiError(
-        400,
-        null,
-        errorMessages.missingField,
-        errorMessages.missingField
-      );
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingField));
     }
 
     // Check for yearOfBirth
     if (!yearOfBirth) {
-      throw new ApiError(
-        400,
-        null,
-        errorMessages.missingField,
-        errorMessages.missingField
-      );
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingField));
     }
 
     // Check for vaid email address..
     if (!isValidEmail(email)) {
-      throw new ApiError(
-        400,
-        null,
-        errorMessages.validEmail,
-        errorMessages.validEmail
-      );
+      return res.status(400).json(new ApiError(400, errorMessages.validEmail));
     }
 
     // Check if provided email isAlready exist..
@@ -105,12 +96,9 @@ export const createAdminUser = asyncHandler(async (req, res) => {
     });
 
     if (existedUser) {
-      throw new ApiError(
-        409,
-        null,
-        errorMessages.emailAlreadyExist,
-        errorMessages.emailAlreadyExist
-      );
+      return res
+        .status(409)
+        .json(new ApiError(409, errorMessages.emailAlreadyExist));
     }
 
     // Create Admin user...
@@ -124,12 +112,9 @@ export const createAdminUser = asyncHandler(async (req, res) => {
     );
 
     if (!createdUserAuth) {
-      throw new ApiError(
-        500,
-        null,
-        errorMessages.internalServerError,
-        errorMessages.internalServerError
-      );
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.internalServerError));
     }
 
     UserResponse = await User.create({
@@ -163,7 +148,7 @@ export const createAdminUser = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    throw new ApiError(417, null, error, error);
+    return res.status(417).json(new ApiError(417, error));
   }
 });
 
@@ -173,35 +158,27 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     if (email) {
       if (!isValidEmail(email)) {
-        throw new ApiError(
-          404,
-          null,
-          errorMessages.validEmail,
-          errorMessages.validEmail
-        );
+        return res
+          .status(404)
+          .json(new ApiError(404, errorMessages.validEmail));
       }
     }
 
     const userAuthentication = await UserAuth.findOne({ $or: [{ email }] });
 
     if (!userAuthentication) {
-      throw (
-        (new ApiError(404, null),
-        errorMessages.userDoesNotExist,
-        errorMessages.userDoesNotExist)
-      );
+      return res
+        .status(404)
+        .json(new ApiError(404, errorMessages.userDoesNotExist));
     }
 
     const isPasswordValid =
       await userAuthentication.isPasswordCorrect(password);
 
     if (!isPasswordValid) {
-      throw new ApiError(
-        401,
-        null,
-        errorMessages.invalidCredential,
-        errorMessages.invalidCredential
-      );
+      return res
+        .status(401)
+        .json(new ApiError(401, errorMessages.invalidCredential));
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -226,7 +203,7 @@ export const loginUser = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    throw new ApiError(417, null, error, error);
+    return res.status(417).json(new ApiError(417, error));
   }
 });
 
@@ -235,12 +212,9 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
     req.cookies.refreshToken || req.body.refreshToken;
 
   if (!incomingRefreshToken) {
-    throw new ApiError(
-      401,
-      null,
-      errorMessages.unauthorizedRequest,
-      errorMessages.unauthorizedRequest
-    );
+    return res
+      .status(401)
+      .json(new ApiError(401, errorMessages.unauthorizedRequest));
   }
 
   try {
@@ -254,21 +228,15 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
     );
 
     if (!userAuthentication) {
-      throw new ApiError(
-        401,
-        null,
-        errorMessages.invalidRefreshToken,
-        errorMessages.invalidRefreshToken
-      );
+      return res
+        .status(401)
+        .json(new ApiError(401, errorMessages.invalidRefreshToken));
     }
 
     if (incomingRefreshToken !== userAuthentication.refreshToken) {
-      throw new ApiError(
-        401,
-        null,
-        errorMessages.expiredRefreshToken,
-        errorMessages.expiredRefreshToken
-      );
+      return res
+        .status(401)
+        .json(new ApiError(401, errorMessages.expiredRefreshToken));
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -276,12 +244,9 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
     );
 
     if (!accessToken && !refreshToken) {
-      throw new ApiError(
-        500,
-        null,
-        errorMessages.generatingNewToken,
-        errorMessages.generatingNewToken
-      );
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.generatingNewToken));
     }
 
     return res
@@ -296,12 +261,11 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      401,
-      null,
-      error?.message || errorMessages.invalidRefreshToken,
-      error
-    );
+    return res
+      .status(401)
+      .json(
+        new ApiError(401, error?.message || errorMessages.invalidRefreshToken)
+      );
   }
 });
 
@@ -328,34 +292,25 @@ export const changePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
 
     if (!oldPassword && !newPassword) {
-      throw new ApiError(
-        422,
-        null,
-        errorMessages.missingField,
-        errorMessages.missingField
-      );
+      return res
+        .status(422)
+        .json(new ApiError(422, errorMessages.missingField));
     }
 
     const userAuth = await UserAuth.findById(req.user?._id);
 
     if (!userAuth) {
-      throw new ApiError(
-        401,
-        null,
-        errorMessages.invalidAccessToken,
-        errorMessages.invalidAccessToken
-      );
+      return res
+        .status(401)
+        .json(new ApiError(401, errorMessages.invalidAccessToken));
     }
 
     const isPasswordCorrect = await userAuth.isPasswordCorrect(oldPassword);
 
     if (!isPasswordCorrect) {
-      throw new ApiError(
-        400,
-        null,
-        errorMessages.invalidOldPassword,
-        errorMessages.invalidOldPassword
-      );
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.invalidOldPassword));
     }
 
     userAuth.password = newPassword;
@@ -366,6 +321,6 @@ export const changePassword = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, {}, successMessages.passwordChanged));
   } catch (error) {
-    throw new ApiError(401, null, error, errorMessages.updatingPassword);
+    return res.status(401).json(new ApiError(401, error));
   }
 });

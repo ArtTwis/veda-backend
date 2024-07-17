@@ -49,18 +49,7 @@ app.use(`/api/${process.env.VEDA_API_VERSION}/auth`, userAuthRouter);
 
 //  Handle invalid request
 app.use((err, req, res) => {
-  return res.status(404).json(
-    new ApiError(
-      404,
-      {
-        success: false,
-        message:
-          "\nUh-oh! It seems you've wandered off course. Let's steer you back to safety",
-      },
-      "\nUh-oh! It seems you've wandered off course. Let's steer you back to safety",
-      err
-    )
-  );
+  return res.status(404).json(new ApiError(404, err));
 });
 
 export default app;
