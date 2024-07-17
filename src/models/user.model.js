@@ -79,6 +79,10 @@ const UserSchema = new mongoose.Schema(
       enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
       required: [true, "User blood group must required!!"],
     },
+    isActive: {
+      type: Number,
+      default: 1,
+    },
     userAuthId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserAuth",

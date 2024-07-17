@@ -22,6 +22,10 @@ const UserAuthSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
+    isActive: {
+      type: Number,
+      default: 1,
+    },
   },
   {
     timestamps: true,

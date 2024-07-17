@@ -11,8 +11,8 @@
 - post /api/v1/route/patient ( isAdmin, verifyUser, createPatient )
 - post /api/v1/route/patients ( isAdmin, verifyUser, getAllPatients )
 - post /api/v1/route/patient/:patientId ( verifyUser, getPatientDetail )
-- put /api/v1/route/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
 - delete /api/v1/route/patient/:patientId ( isAdmin, verifyUser, deletePatientRecord )
+- put /api/v1/route/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
 
 - Doctor
 - post /api/v1/admin/doctor ( isAdmin, verifyUser, createDoctor )

@@ -143,7 +143,7 @@ export const getAllPatients = asyncHandler(async (req, res) => {
   try {
     const users = await User.aggregate([
       {
-        $match: { userType: "PATIENT" },
+        $match: { userType: "PATIENT", isActive: 1 },
       },
       {
         $project: {
@@ -168,10 +168,10 @@ export const getAllPatients = asyncHandler(async (req, res) => {
       },
     ]);
 
-    if (!users) {
+    if (users.length === 0) {
       return res
         .status(500)
-        .json(new ApiError(500, errorMessages.internalServerError));
+        .json(new ApiError(500, errorMessages.userNotFound));
     }
 
     return res
@@ -194,7 +194,7 @@ export const getPatientDetail = asyncHandler(async (req, res) => {
 
     const user = await User.aggregate([
       {
-        $match: { _id: patientId, userType: "PATIENT" },
+        $match: { _id: patientId, userType: "PATIENT", isActive: 1 },
       },
       {
         $project: {
@@ -211,15 +211,47 @@ export const getPatientDetail = asyncHandler(async (req, res) => {
       },
     ]);
 
-    if (!user) {
+    if (user.length === 0) {
       return res
         .status(500)
-        .json(new ApiError(500, errorMessages.internalServerError));
+        .json(new ApiError(500, errorMessages.userNotFound));
     }
 
     return res
       .status(200)
       .json(new ApiResponse(200, user, successMessages.patientFetched));
+  } catch (error) {
+    return res.status(417).json(new ApiError(417, error));
+  }
+});
+
+export const disablePatient = asyncHandler(async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    if (!patientId) {
+      return res
+        .status(422)
+        .json(new ApiError(417, errorMessages.invalidInput));
+    }
+
+    const user = await User.findByIdAndUpdate(
+      patientId,
+      {
+        $set: { isActive: 0 },
+      },
+      { new: true }
+    ).select("_id");
+
+    if (user.length === 0) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.userNotFound));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, successMessages.disablePatient));
   } catch (error) {
     console.log("error :>", error);
     return res.status(417).json(new ApiError(417, error));
