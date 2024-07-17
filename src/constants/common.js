@@ -41,4 +41,5 @@ export const successMessages = {
   userLogout: "User logout successfully..",
   passwordChanged: "Password changed successfully..",
   patientsFetched: "All patients fetched successfully..",
+  patientFetched: "Patient details fetched successfully..",
 };

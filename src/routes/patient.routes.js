@@ -4,6 +4,7 @@ import { isAdmin, verifyJwtToken } from "../middlewares/auth.middleware.js";
 import {
   createPatient,
   getAllPatients,
+  getPatientDetail,
 } from "../controllers/patient.controller.js";
 
 const router = Router();
@@ -18,5 +19,7 @@ router
   );
 
 router.route("/patients").post(verifyJwtToken, isAdmin, getAllPatients);
+
+router.route("/patient/:patientId").post(verifyJwtToken, getPatientDetail);
 
 export default router;

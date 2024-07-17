@@ -135,7 +135,6 @@ export const createPatient = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    console.log("error :>", error);
     return res.status(417).json(new ApiError(417, error));
   }
 });
@@ -178,6 +177,49 @@ export const getAllPatients = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, users, successMessages.patientsFetched));
+  } catch (error) {
+    return res.status(417).json(new ApiError(417, error));
+  }
+});
+
+export const getPatientDetail = asyncHandler(async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    if (!patientId) {
+      return res
+        .status(422)
+        .json(new ApiError(417, errorMessages.invalidInput));
+    }
+
+    const user = await User.aggregate([
+      {
+        $match: { _id: patientId, userType: "PATIENT" },
+      },
+      {
+        $project: {
+          userAuthId: 0,
+        },
+      },
+      {
+        $lookup: {
+          from: "Appointment",
+          localField: "_id",
+          foreignField: "patientId",
+          as: "Appointments",
+        },
+      },
+    ]);
+
+    if (!user) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.internalServerError));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, successMessages.patientFetched));
   } catch (error) {
     console.log("error :>", error);
     return res.status(417).json(new ApiError(417, error));
