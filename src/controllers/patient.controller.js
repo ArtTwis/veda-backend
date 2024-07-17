@@ -139,3 +139,47 @@ export const createPatient = asyncHandler(async (req, res) => {
     return res.status(417).json(new ApiError(417, error));
   }
 });
+
+export const getAllPatients = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.aggregate([
+      {
+        $match: { userType: "PATIENT" },
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          userType: 1,
+          name: 1,
+          mobileNumber: 1,
+          yearOfBirth: 1,
+          gender: 1,
+          email: 1,
+          bloodGroup: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "Appointment",
+          localField: "_id",
+          foreignField: "patientId",
+          as: "Appointments",
+        },
+      },
+    ]);
+
+    if (!users) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.internalServerError));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, users, successMessages.patientsFetched));
+  } catch (error) {
+    console.log("error :>", error);
+    return res.status(417).json(new ApiError(417, error));
+  }
+});

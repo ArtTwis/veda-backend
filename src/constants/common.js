@@ -40,4 +40,5 @@ export const successMessages = {
   tokenRegenerated: "Tokens reGenerated successfully..",
   userLogout: "User logout successfully..",
   passwordChanged: "Password changed successfully..",
+  patientsFetched: "All patients fetched successfully..",
 };

@@ -9,8 +9,8 @@
 
 - Patient
 - post /api/v1/route/patient ( isAdmin, verifyUser, createPatient )
-- put /api/v1/route/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
 - get /api/v1/route/patients ( isAdmin, verifyUser, getAllPatients )
+- put /api/v1/route/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
 - get /api/v1/route/patient/:patientId ( verifyUser, getPatientDetail )
 - delete /api/v1/route/patient/:patientId ( isAdmin, verifyUser, deletePatientRecord )
 

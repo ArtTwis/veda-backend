@@ -11,8 +11,8 @@ const AppointmentSchema = new mongoose.Schema(
       ref: "Payment",
     },
     patientId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
+      required: true,
     },
     appointmentDateTime: {
       type: String,
