@@ -322,3 +322,50 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", cookiesOptions)
     .json(new ApiResponse(200, null, successMessages.userLogout));
 });
+
+export const changePassword = asyncHandler(async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword && !newPassword) {
+      throw new ApiError(
+        422,
+        null,
+        errorMessages.missingField,
+        errorMessages.missingField
+      );
+    }
+
+    const userAuth = await UserAuth.findById(req.user?._id);
+
+    if (!userAuth) {
+      throw new ApiError(
+        401,
+        null,
+        errorMessages.invalidAccessToken,
+        errorMessages.invalidAccessToken
+      );
+    }
+
+    const isPasswordCorrect = await userAuth.isPasswordCorrect(oldPassword);
+
+    if (!isPasswordCorrect) {
+      throw new ApiError(
+        400,
+        null,
+        errorMessages.invalidOldPassword,
+        errorMessages.invalidOldPassword
+      );
+    }
+
+    userAuth.password = newPassword;
+
+    await userAuth.save({ validateBeforeSave: false });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, successMessages.passwordChanged));
+  } catch (error) {
+    throw new ApiError(401, null, error, errorMessages.updatingPassword);
+  }
+});

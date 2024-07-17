@@ -22,6 +22,9 @@ export const errorMessages = {
   expiredRefreshToken: "Refreshed token is expired or used!",
   generatingNewToken:
     "The server encountered an internal error while generating new tokens! try again..",
+  invalidOldPassword: "Invalid old password! try again with valid credantial..",
+  updatingPassword:
+    "The server encountered an internal error while updating password! try again..",
 };
 
 export const successMessages = {
@@ -29,4 +32,5 @@ export const successMessages = {
   userLoggedIn: "User loggedIn successfully..",
   tokenRegenerated: "Tokens reGenerated successfully..",
   userLogout: "User logout successfully..",
+  passwordChanged: "Password changed successfully..",
 };

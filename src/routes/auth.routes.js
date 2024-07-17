@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 import { verifyJwtToken } from "../middlewares/auth.middleware.js";
 import {
+  changePassword,
   createAdminUser,
   loginUser,
   logoutUser,
@@ -30,5 +31,7 @@ router
 router.route("/regenerateToken").post(reGenerateAccessToken);
 
 router.route("/logout").post(verifyJwtToken, logoutUser);
+
+router.route("/changePassword").put(verifyJwtToken, changePassword);
 
 export default router;

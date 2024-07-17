@@ -21,11 +21,11 @@ export const verifyJwtToken = asyncHandler(async (req, _, next) => {
 
     const decodedTokenInfo = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    const user = await UserAuth.findById(decodedTokenInfo?._id).select(
+    const userAuth = await UserAuth.findById(decodedTokenInfo?._id).select(
       "-password -refreshToken"
     );
 
-    if (!user) {
+    if (!userAuth) {
       // TODO: discuss about FE...
       throw new ApiError(
         401,
@@ -35,7 +35,7 @@ export const verifyJwtToken = asyncHandler(async (req, _, next) => {
       );
     }
 
-    req.user = user;
+    req.user = userAuth;
 
     next();
   } catch (error) {
