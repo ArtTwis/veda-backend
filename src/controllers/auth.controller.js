@@ -11,6 +11,7 @@ import { isValidEmail } from "../utils/Validate.js";
 import { UserAuth } from "../models/userAuth.model.js";
 import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import { generateVedaUserId } from "../utils/Utils.js";
 
 const generateAccessAndRefreshToken = asyncHandler(
   async (userAuthenticationId) => {
@@ -34,12 +35,12 @@ const generateAccessAndRefreshToken = asyncHandler(
 
 export const createAdminUser = asyncHandler(async (req, res) => {
   try {
-    const result = validationResult(req);
+    const validateResult = validationResult(req).array();
 
-    if (!result.isEmpty()) {
+    if (validateResult.length > 0) {
       return res
         .status(422)
-        .json(new ApiError(422, errorMessages.invalidInput));
+        .json(new ApiError(422, validateResult || errorMessages.invalidInput));
     }
 
     const {
@@ -117,8 +118,16 @@ export const createAdminUser = asyncHandler(async (req, res) => {
         .json(new ApiError(500, errorMessages.internalServerError));
     }
 
+    const generateUserId = await generateVedaUserId();
+
+    if (!generateUserId) {
+      return res
+        .status(417)
+        .json(new ApiError(417, errorMessages.generatingUserId));
+    }
+
     UserResponse = await User.create({
-      _id: UserResponse._id,
+      _id: generateUserId,
       userType: "ADMIN",
       name,
       guardianName,
@@ -134,6 +143,7 @@ export const createAdminUser = asyncHandler(async (req, res) => {
       uniqueIdType,
       uniqueIdValue,
       bloodGroup,
+      userAuthId: UserResponse._id,
     });
 
     const createdUser = await User.findById(UserResponse._id).select();
@@ -154,6 +164,14 @@ export const createAdminUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   try {
+    const validateResult = validationResult(req).array();
+
+    if (validateResult.length > 0) {
+      return res
+        .status(422)
+        .json(new ApiError(422, validateResult || errorMessages.invalidInput));
+    }
+
     const { email, password } = req.body;
 
     if (email) {
@@ -289,6 +307,14 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 export const changePassword = asyncHandler(async (req, res) => {
   try {
+    const validateResult = validationResult(req).array();
+
+    if (validateResult.length > 0) {
+      return res
+        .status(422)
+        .json(new ApiError(422, validateResult || errorMessages.invalidInput));
+    }
+
     const { oldPassword, newPassword } = req.body;
 
     if (!oldPassword && !newPassword) {

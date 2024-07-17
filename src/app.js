@@ -44,8 +44,10 @@ app.use(cookieParser());
 ==============*/
 
 import userAuthRouter from "./routes/auth.routes.js";
+import patientRouter from "./routes/patient.routes.js";
 
 app.use(`/api/${process.env.VEDA_API_VERSION}/auth`, userAuthRouter);
+app.use(`/api/${process.env.VEDA_API_VERSION}/route`, patientRouter);
 
 //  Handle invalid request
 app.use((err, req, res) => {

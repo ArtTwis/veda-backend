@@ -32,6 +32,15 @@ router.route("/regenerateToken").post(reGenerateAccessToken);
 
 router.route("/logout").post(verifyJwtToken, logoutUser);
 
-router.route("/changePassword").put(verifyJwtToken, changePassword);
+router
+  .route("/changePassword")
+  .put(
+    [
+      body("oldPassword").trim().notEmpty,
+      body("newPassword").trim().notEmpty(),
+    ],
+    verifyJwtToken,
+    changePassword
+  );
 
 export default router;

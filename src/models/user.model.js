@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema(
   {
     _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserAuth",
+      type: String,
+      required: true,
+      trim: true,
     },
     userType: {
       type: String,
@@ -77,6 +78,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
       required: [true, "User blood group must required!!"],
+    },
+    userAuthId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserAuth",
     },
   },
   {

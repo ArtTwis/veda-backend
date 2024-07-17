@@ -8,11 +8,11 @@
 - put /api/v1/auth/change-password ( verifyUser, chnagePassword )
 
 - Patient
-- post /api/v1/admin/patient ( isAdmin, verifyUser, createPatient )
-- put /api/v1/admin/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
-- get /api/v1/admin/patients ( isAdmin, verifyUser, getAllPatients )
-- get /api/v1/admin/patient/:patientId ( verifyUser, getPatientDetail )
-- delete /api/v1/admin/patient/:patientId ( isAdmin, verifyUser, deletePatientRecord )
+- post /api/v1/route/patient ( isAdmin, verifyUser, createPatient )
+- put /api/v1/route/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
+- get /api/v1/route/patients ( isAdmin, verifyUser, getAllPatients )
+- get /api/v1/route/patient/:patientId ( verifyUser, getPatientDetail )
+- delete /api/v1/route/patient/:patientId ( isAdmin, verifyUser, deletePatientRecord )
 
 - Doctor
 - post /api/v1/admin/doctor ( isAdmin, verifyUser, createDoctor )
