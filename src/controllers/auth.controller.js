@@ -27,12 +27,7 @@ const generateAccessAndRefreshToken = asyncHandler(
 
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new ApiError(
-        500,
-        null,
-        errorMessages.internalServerError,
-        errorMessages.internalServerError
-      );
+      throw new ApiError(500, null, error, error);
     }
   }
 );
@@ -305,7 +300,25 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
       401,
       null,
       error?.message || errorMessages.invalidRefreshToken,
-      errorMessages.invalidRefreshToken
+      error
     );
   }
+});
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1, // this removes the field from the document..
+      },
+    },
+    { new: true }
+  );
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookiesOptions)
+    .clearCookie("refreshToken", cookiesOptions)
+    .json(new ApiResponse(200, null, successMessages.userLogout));
 });

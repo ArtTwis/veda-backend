@@ -4,7 +4,7 @@
 - post /api/v1/auth/createAdmin ( createAdminUser )
 - post /api/v1/auth/login ( loginUser )
 - post /api/v1/auth/refreshToken ( reGenerateAccessToken )
-- get /api/v1/auth/logout ( verifyUser, logoutUser )
+- post /api/v1/auth/logout ( verifyUser, logoutUser )
 - put /api/v1/auth/change-password ( verifyUser, chnagePassword )
 
 - Patient

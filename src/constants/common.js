@@ -18,6 +18,7 @@ export const errorMessages = {
   invalidCredential: "Invalid user credentials! try again..",
   unauthorizedRequest: "Unauthorized request!",
   invalidRefreshToken: "Invalid refresh token!",
+  invalidAccessToken: "Invalid access token!",
   expiredRefreshToken: "Refreshed token is expired or used!",
   generatingNewToken:
     "The server encountered an internal error while generating new tokens! try again..",
@@ -27,4 +28,5 @@ export const successMessages = {
   adminCreatedSuccessfully: "Admin user has been successfully created..",
   userLoggedIn: "User loggedIn successfully..",
   tokenRegenerated: "Tokens reGenerated successfully..",
+  userLogout: "User logout successfully..",
 };
