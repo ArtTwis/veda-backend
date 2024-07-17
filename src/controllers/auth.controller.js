@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import {
@@ -9,30 +10,34 @@ import {
 import { isValidEmail } from "../utils/Validate.js";
 import { UserAuth } from "../models/userAuth.model.js";
 import { User } from "../models/user.model.js";
+import { asyncHandler } from "../utils/AsyncHandler.js";
 
-const generateAccessAndRefreshToken = async (userAuthenticationId) => {
-  try {
-    const user = await UserAuth.findById(userAuthenticationId);
+const generateAccessAndRefreshToken = asyncHandler(
+  async (userAuthenticationId) => {
+    try {
+      const userAuth = await UserAuth.findById(userAuthenticationId);
 
-    const accessToken = await user.generateAccessToken();
+      const accessToken = await userAuth.generateAccessToken();
 
-    const refreshToken = await user.generateRefreshToken();
+      const refreshToken = await userAuth.generateRefreshToken();
 
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
+      userAuth.refreshToken = refreshToken;
 
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(
-      500,
-      null,
-      errorMessages.internalServerError,
-      errorMessages.internalServerError
-    );
+      await userAuth.save({ validateBeforeSave: false });
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new ApiError(
+        500,
+        null,
+        errorMessages.internalServerError,
+        errorMessages.internalServerError
+      );
+    }
   }
-};
+);
 
-export const createAdminUser = async (req, res) => {
+export const createAdminUser = asyncHandler(async (req, res) => {
   try {
     const result = validationResult(req);
 
@@ -165,9 +170,9 @@ export const createAdminUser = async (req, res) => {
   } catch (error) {
     throw new ApiError(417, null, error, error);
   }
-};
+});
 
-export const loginUser = async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -228,4 +233,79 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     throw new ApiError(417, null, error, error);
   }
-};
+});
+
+export const reGenerateAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(
+      401,
+      null,
+      errorMessages.unauthorizedRequest,
+      errorMessages.unauthorizedRequest
+    );
+  }
+
+  try {
+    const decodedToken = await jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    const userAuthentication = await UserAuth.findById(decodedToken._id).select(
+      "-password"
+    );
+
+    if (!userAuthentication) {
+      throw new ApiError(
+        401,
+        null,
+        errorMessages.invalidRefreshToken,
+        errorMessages.invalidRefreshToken
+      );
+    }
+
+    if (incomingRefreshToken !== userAuthentication.refreshToken) {
+      throw new ApiError(
+        401,
+        null,
+        errorMessages.expiredRefreshToken,
+        errorMessages.expiredRefreshToken
+      );
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      userAuthentication._id
+    );
+
+    if (!accessToken && !refreshToken) {
+      throw new ApiError(
+        500,
+        null,
+        errorMessages.generatingNewToken,
+        errorMessages.generatingNewToken
+      );
+    }
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, cookiesOptions)
+      .cookie("refreshToken", refreshToken, cookiesOptions)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken },
+          successMessages.tokenRegenerated
+        )
+      );
+  } catch (error) {
+    throw new ApiError(
+      401,
+      null,
+      error?.message || errorMessages.invalidRefreshToken,
+      errorMessages.invalidRefreshToken
+    );
+  }
+});

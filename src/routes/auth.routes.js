@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { createAdminUser, loginUser } from "../controllers/auth.controller.js";
+import {
+  createAdminUser,
+  loginUser,
+  reGenerateAccessToken,
+} from "../controllers/auth.controller.js";
 
 const router = Router();
 
@@ -20,5 +24,7 @@ router
     [body("email").trim().isEmail(), body("password").trim().notEmpty()],
     loginUser
   );
+
+router.route("/regenerateToken").post(reGenerateAccessToken);
 
 export default router;

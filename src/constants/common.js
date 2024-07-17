@@ -16,9 +16,15 @@ export const errorMessages = {
     "The server encountered an internal error or misconfiguration and was unable to complete your request.",
   userDoesNotExist: "User does not exist! Please check email address..",
   invalidCredential: "Invalid user credentials! try again..",
+  unauthorizedRequest: "Unauthorized request!",
+  invalidRefreshToken: "Invalid refresh token!",
+  expiredRefreshToken: "Refreshed token is expired or used!",
+  generatingNewToken:
+    "The server encountered an internal error while generating new tokens! try again..",
 };
 
 export const successMessages = {
   adminCreatedSuccessfully: "Admin user has been successfully created..",
   userLoggedIn: "User loggedIn successfully..",
+  tokenRegenerated: "Tokens reGenerated successfully..",
 };

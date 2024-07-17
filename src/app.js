@@ -45,16 +45,15 @@ app.use(cookieParser());
 
 import userAuthRouter from "./routes/auth.routes.js";
 
-app.use(`/api/${process.env.API_VERSION}/auth`, userAuthRouter);
+app.use(`/api/${process.env.VEDA_API_VERSION}/auth`, userAuthRouter);
 
 //  Handle invalid request
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   return res.status(404).json(
     new ApiError(
       404,
       {
         success: false,
-        requestedURL: req.req.originalUrl,
         message:
           "\nUh-oh! It seems you've wandered off course. Let's steer you back to safety",
       },
