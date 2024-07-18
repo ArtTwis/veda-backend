@@ -19,22 +19,24 @@ export const verifyJwtToken = asyncHandler(async (req, _, next) => {
 
     const decodedTokenInfo = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    const userAuth = await UserAuth.findById(decodedTokenInfo?._id).select(
-      "-password -refreshToken"
-    );
+    const UserAuthResponse = await UserAuth.findById(
+      decodedTokenInfo?._id
+    ).select("-password -refreshToken");
 
-    if (!userAuth) {
+    if (!UserAuthResponse) {
       // TODO: discuss about FE...
       return res
         .status(401)
         .json(new ApiError(401, errorMessages.invalidAccessToken));
     }
 
-    req.user = userAuth;
+    req.user = UserAuthResponse;
 
     next();
   } catch (error) {
-    return res.status(401).json(new ApiError(401, error));
+    return res
+      .status(401)
+      .json(new ApiError(401, errorMessages.invalidAccessToken));
   }
 });
 
