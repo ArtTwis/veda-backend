@@ -1,17 +1,16 @@
+import mongoose from "mongoose";
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import ApiError from "../utils/ApiError.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import {
-  errorMessages,
-  successMessages,
-  cookiesOptions,
-} from "../constants/common.js";
-import { isValidEmail } from "../utils/Validate.js";
 import { UserAuth } from "../models/userAuth.model.js";
 import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 import { generateVedaUserId } from "../utils/Utils.js";
+import { isValidEmail } from "../utils/Validate.js";
+import { cookiesOptions, DEFAULT_PASSWORD } from "../constants/common.js";
+import { errorMessages } from "../constants/errorMessage.js";
+import { successMessages } from "../constants/successMessage.js";
 
 const generateAccessAndRefreshToken = asyncHandler(
   async (userAuthenticationId) => {
@@ -43,6 +42,14 @@ export const createAdminUser = asyncHandler(async (req, res) => {
         .json(new ApiError(422, validateResult || errorMessages.invalidInput));
     }
 
+    const userType = req.params.userType.trim();
+
+    if (!userType) {
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingParameter));
+    }
+
     const {
       email,
       password,
@@ -61,37 +68,28 @@ export const createAdminUser = asyncHandler(async (req, res) => {
       bloodGroup,
     } = req.body;
 
-    // Check required fields..
     if (
-      [
-        email,
-        password,
-        name,
-        mobileNumber,
-        gender,
-        addressLine1,
-        addressCity,
-        addressState,
-      ].some((field) => field?.trim() === "")
+      [email, password, name, mobileNumber, gender].some(
+        (field) => field === "" || field === undefined
+      )
     ) {
       return res
         .status(400)
         .json(new ApiError(400, errorMessages.missingField));
     }
 
-    // Check for yearOfBirth
     if (!yearOfBirth) {
       return res
         .status(400)
         .json(new ApiError(400, errorMessages.missingField));
     }
 
-    // Check for vaid email address..
     if (!isValidEmail(email)) {
-      return res.status(400).json(new ApiError(400, errorMessages.validEmail));
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.invalidEmail));
     }
 
-    // Check if provided email isAlready exist..
     const existedUser = await UserAuth.findOne({
       $or: [{ email }],
     });
@@ -102,33 +100,27 @@ export const createAdminUser = asyncHandler(async (req, res) => {
         .json(new ApiError(409, errorMessages.emailAlreadyExist));
     }
 
-    // Create Admin user...
-    let UserResponse = await UserAuth.create({
+    let UserAuthResponse = await UserAuth.create({
       email,
       password,
     });
 
-    const createdUserAuth = await UserAuth.findById(UserResponse._id).select(
-      "-password -refreshToken"
-    );
-
-    if (!createdUserAuth) {
+    if (!UserAuthResponse) {
       return res
         .status(500)
         .json(new ApiError(500, errorMessages.internalServerError));
     }
 
-    const generateUserId = await generateVedaUserId();
+    const generatedUserId = await generateVedaUserId();
 
-    if (!generateUserId) {
+    if (!generatedUserId) {
       return res
         .status(417)
-        .json(new ApiError(417, errorMessages.generatingUserId));
+        .json(new ApiError(417, errorMessages.failedToGenerateUserId));
     }
 
-    UserResponse = await User.create({
-      _id: generateUserId,
-      userType: "ADMIN",
+    const UserResponse = await User.create({
+      userType: userType,
       name,
       guardianName,
       mobileNumber,
@@ -143,21 +135,23 @@ export const createAdminUser = asyncHandler(async (req, res) => {
       uniqueIdType,
       uniqueIdValue,
       bloodGroup,
-      userAuthId: UserResponse._id,
+      userAuthId: UserAuthResponse._id,
+      hospitalId: generatedUserId,
     });
 
-    const createdUser = await User.findById(UserResponse._id).select();
+    if (!UserResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.internalServerError));
+    }
 
     return res
       .status(201)
       .json(
-        new ApiResponse(
-          201,
-          createdUser,
-          successMessages.adminCreatedSuccessfully
-        )
+        new ApiResponse(201, UserResponse, successMessages.newAdminCreated)
       );
   } catch (error) {
+    console.log("error :>>", error);
     return res.status(417).json(new ApiError(417, error));
   }
 });
@@ -178,20 +172,19 @@ export const loginUser = asyncHandler(async (req, res) => {
       if (!isValidEmail(email)) {
         return res
           .status(404)
-          .json(new ApiError(404, errorMessages.validEmail));
+          .json(new ApiError(404, errorMessages.invalidEmail));
       }
     }
 
-    const userAuthentication = await UserAuth.findOne({ $or: [{ email }] });
+    const UserAuthResponse = await UserAuth.findOne({ $or: [{ email }] });
 
-    if (!userAuthentication) {
+    if (!UserAuthResponse) {
       return res
         .status(404)
         .json(new ApiError(404, errorMessages.userDoesNotExist));
     }
 
-    const isPasswordValid =
-      await userAuthentication.isPasswordCorrect(password);
+    const isPasswordValid = await UserAuthResponse.isPasswordCorrect(password);
 
     if (!isPasswordValid) {
       return res
@@ -200,10 +193,24 @@ export const loginUser = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-      userAuthentication._id
+      UserAuthResponse._id
     );
 
-    const loggedInUser = await User.findById(userAuthentication._id).select();
+    if (!(accessToken && refreshToken)) {
+      return res
+        .status(401)
+        .json(new ApiError(401, errorMessages.failedToGenerateNewTokens));
+    }
+
+    const UserResponse = await User.findOne({
+      userAuthId: UserAuthResponse._id,
+    }).select();
+
+    if (!UserResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.internalServerError));
+    }
 
     return res
       .status(200)
@@ -213,7 +220,7 @@ export const loginUser = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           {
-            user: loggedInUser,
+            user: UserResponse,
             accessToken,
             refreshToken,
           },
@@ -223,6 +230,24 @@ export const loginUser = asyncHandler(async (req, res) => {
   } catch (error) {
     return res.status(417).json(new ApiError(417, error));
   }
+});
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  await UserAuth.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1, // this removes the field from the document..
+      },
+    },
+    { new: true }
+  );
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", cookiesOptions)
+    .clearCookie("refreshToken", cookiesOptions)
+    .json(new ApiResponse(200, null, successMessages.loggedOutSuccess));
 });
 
 export const reGenerateAccessToken = asyncHandler(async (req, res) => {
@@ -241,17 +266,17 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET
     );
 
-    const userAuthentication = await UserAuth.findById(decodedToken._id).select(
+    const UserAuthResponse = await UserAuth.findById(decodedToken._id).select(
       "-password"
     );
 
-    if (!userAuthentication) {
+    if (!(UserAuthResponse && UserAuthResponse.refreshToken)) {
       return res
         .status(401)
         .json(new ApiError(401, errorMessages.invalidRefreshToken));
     }
 
-    if (incomingRefreshToken !== userAuthentication.refreshToken) {
+    if (incomingRefreshToken !== UserAuthResponse.refreshToken) {
       return res
         .status(401)
         .json(new ApiError(401, errorMessages.expiredRefreshToken));
@@ -264,7 +289,7 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
     if (!accessToken && !refreshToken) {
       return res
         .status(500)
-        .json(new ApiError(500, errorMessages.generatingNewToken));
+        .json(new ApiError(500, errorMessages.failedToGenerateNewTokens));
     }
 
     return res
@@ -287,24 +312,6 @@ export const reGenerateAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-export const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      $unset: {
-        refreshToken: 1, // this removes the field from the document..
-      },
-    },
-    { new: true }
-  );
-
-  return res
-    .status(200)
-    .clearCookie("accessToken", cookiesOptions)
-    .clearCookie("refreshToken", cookiesOptions)
-    .json(new ApiResponse(200, null, successMessages.userLogout));
-});
-
 export const changePassword = asyncHandler(async (req, res) => {
   try {
     const validateResult = validationResult(req).array();
@@ -323,15 +330,16 @@ export const changePassword = asyncHandler(async (req, res) => {
         .json(new ApiError(422, errorMessages.missingField));
     }
 
-    const userAuth = await UserAuth.findById(req.user?._id);
+    const UserAuthResponse = await UserAuth.findById(req.user?._id);
 
-    if (!userAuth) {
+    if (!UserAuthResponse) {
       return res
         .status(401)
-        .json(new ApiError(401, errorMessages.invalidAccessToken));
+        .json(new ApiError(401, errorMessages.unauthorizedRequest));
     }
 
-    const isPasswordCorrect = await userAuth.isPasswordCorrect(oldPassword);
+    const isPasswordCorrect =
+      await UserAuthResponse.isPasswordCorrect(oldPassword);
 
     if (!isPasswordCorrect) {
       return res
@@ -339,9 +347,9 @@ export const changePassword = asyncHandler(async (req, res) => {
         .json(new ApiError(400, errorMessages.invalidOldPassword));
     }
 
-    userAuth.password = newPassword;
+    UserAuthResponse.password = newPassword;
 
-    await userAuth.save({ validateBeforeSave: false });
+    await UserAuthResponse.save({ validateBeforeSave: false });
 
     return res
       .status(200)

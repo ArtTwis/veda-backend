@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import ApiError from "./utils/ApiError.js";
+import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 
 const app = express();
 
@@ -44,16 +44,12 @@ app.use(cookieParser());
 ==============*/
 
 import userAuthRouter from "./routes/auth.routes.js";
-import patientRouter from "./routes/patient.routes.js";
-import doctorRouter from "./routes/doctor.routes.js";
+import userRouter from "./routes/user.routes.js";
 
 app.use(`/api/${process.env.VEDA_API_VERSION}/auth`, userAuthRouter);
-app.use(`/api/${process.env.VEDA_API_VERSION}/route`, patientRouter);
-app.use(`/api/${process.env.VEDA_API_VERSION}/route`, doctorRouter);
+app.use(`/api/${process.env.VEDA_API_VERSION}/route`, userRouter);
 
 //  Handle invalid request
-app.use((err, req, res) => {
-  return res.status(404).json(new ApiError(404, err));
-});
+app.use(notFoundMiddleware);
 
 export default app;

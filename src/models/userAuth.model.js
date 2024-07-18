@@ -7,19 +7,18 @@ const UserAuthSchema = new mongoose.Schema(
   {
     email: {
       type: String,
-      required: [true, "User email must required!!"],
-      unique: [true, "User email must be unique!!"],
+      required: true,
+      unique: true,
       trim: true,
       lowercase: true,
       index: true,
     },
     password: {
       type: String,
-      required: [true, "User password must required!!"],
+      trim: true,
     },
     refreshToken: {
       type: String,
-      required: false,
       default: null,
     },
     isActive: {
