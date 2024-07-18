@@ -2,22 +2,18 @@ import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
   {
-    _id: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     userType: {
       type: String,
       enum: ["DOCTOR", "PATIENT", "ADMIN"],
-      required: [true, "User type must required!!"],
       trim: true,
     },
     name: {
       type: String,
-      required: [true, "User name must required!!"],
+      required: [
+        true,
+        "Error: The 'name' field is required to complete this request. Please provide a user name..",
+      ],
       trim: true,
-      index: true,
     },
     guardianName: {
       type: String,
@@ -25,7 +21,10 @@ const UserSchema = new mongoose.Schema(
     },
     mobileNumber: {
       type: String,
-      required: [true, "User mobile number must required!!"],
+      required: [
+        true,
+        "Error: The 'mobileNumber' field is required to complete this request. Please provide a valid mobile number..",
+      ],
       trim: true,
     },
     guardianMobileNumber: {
@@ -34,7 +33,10 @@ const UserSchema = new mongoose.Schema(
     },
     yearOfBirth: {
       type: Number,
-      required: [true, "User year of birth must required!!"],
+      required: [
+        true,
+        "Error: The 'yearOfBirth' field is required to complete this request. Please provide a valid year of birth..",
+      ],
     },
     dateOfBirth: {
       type: String,
@@ -43,12 +45,21 @@ const UserSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: ["MALE", "FEMALE", "OTHER"],
-      required: true,
+      required: [
+        true,
+        "Error: The 'gender' field is required to complete this request. Please provide a user gender..",
+      ],
     },
     email: {
       type: String,
-      required: [true, "User email must required!!"],
-      unique: true,
+      required: [
+        true,
+        "Error: The 'email' field is required to complete this request. Please provide a valid email address..",
+      ],
+      unique: [
+        true,
+        "Error: The 'email' field must be unique to complete this request. Please provide a valid email address..",
+      ],
       trim: true,
       lowercase: true,
     },
@@ -67,17 +78,14 @@ const UserSchema = new mongoose.Schema(
     uniqueIdType: {
       type: String,
       enum: ["ADHAAR", "BHAMASHAH", "DL", "VOTERID"],
-      required: [true, "User unique id type must required!!"],
     },
     uniqueIdValue: {
       type: String,
-      required: [true, "User unique id value must required!!"],
       trim: true,
     },
     bloodGroup: {
       type: String,
       enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
-      required: [true, "User blood group must required!!"],
     },
     isActive: {
       type: Number,
@@ -86,6 +94,14 @@ const UserSchema = new mongoose.Schema(
     userAuthId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserAuth",
+    },
+    hospitalId: {
+      type: String,
+      required: [
+        true,
+        "Error: The 'hospitalId' field is required to complete this request. Please provide a valid hospital ID..",
+      ],
+      trim: true,
     },
   },
   {

@@ -7,8 +7,14 @@ const UserAuthSchema = new mongoose.Schema(
   {
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: [
+        true,
+        "Error: The 'email' field is required to complete this request. Please provide a valid email address..",
+      ],
+      unique: [
+        true,
+        "Error: The 'email' field must be unique to complete this request. Please provide a valid email address..",
+      ],
       trim: true,
       lowercase: true,
       index: true,
