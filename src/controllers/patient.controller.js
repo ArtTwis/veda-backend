@@ -131,7 +131,7 @@ export const createPatient = asyncHandler(async (req, res) => {
         new ApiResponse(
           201,
           createdUser,
-          successMessages.adminCreatedSuccessfully
+          successMessages.patientCreatedSuccessfully
         )
       );
   } catch (error) {
@@ -252,6 +252,70 @@ export const disablePatient = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, user, successMessages.disablePatient));
+  } catch (error) {
+    return res.status(417).json(new ApiError(417, error));
+  }
+});
+
+export const enablePatient = asyncHandler(async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    if (!patientId) {
+      return res
+        .status(422)
+        .json(new ApiError(417, errorMessages.invalidInput));
+    }
+
+    const user = await User.findByIdAndUpdate(
+      patientId,
+      {
+        $set: { isActive: 1 },
+      },
+      { new: true }
+    ).select("_id");
+
+    if (user.length === 0) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.userNotFound));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, successMessages.enablePatient));
+  } catch (error) {
+    return res.status(417).json(new ApiError(417, error));
+  }
+});
+
+export const updatePatientInfo = asyncHandler(async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    let updatingFields = {};
+
+    Object.keys(req.body).forEach((field) => {
+      updatingFields[field] = req.body[field];
+    });
+
+    const user = await User.findByIdAndUpdate(
+      patientId,
+      {
+        $set: updatingFields,
+      },
+      { new: true }
+    );
+
+    if (user.length === 0) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.userNotFound));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, successMessages.userUpdate));
   } catch (error) {
     console.log("error :>", error);
     return res.status(417).json(new ApiError(417, error));

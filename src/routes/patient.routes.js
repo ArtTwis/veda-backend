@@ -4,8 +4,10 @@ import { isAdmin, verifyJwtToken } from "../middlewares/auth.middleware.js";
 import {
   createPatient,
   disablePatient,
+  enablePatient,
   getAllPatients,
   getPatientDetail,
+  updatePatientInfo,
 } from "../controllers/patient.controller.js";
 
 const router = Router();
@@ -24,7 +26,15 @@ router.route("/patients").post(verifyJwtToken, isAdmin, getAllPatients);
 router.route("/patient/:patientId").post(verifyJwtToken, getPatientDetail);
 
 router
-  .route("/patient/:patientId")
-  .put(verifyJwtToken, isAdmin, disablePatient);
+  .route("/patient/disable/:patientId")
+  .patch(verifyJwtToken, isAdmin, disablePatient);
+
+router
+  .route("/patient/enable/:patientId")
+  .patch(verifyJwtToken, isAdmin, enablePatient);
+
+router
+  .route("/patient/update/:patientId")
+  .patch(verifyJwtToken, isAdmin, updatePatientInfo);
 
 export default router;

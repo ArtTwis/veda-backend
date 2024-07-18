@@ -36,6 +36,7 @@ export const errorMessages = {
 
 export const successMessages = {
   adminCreatedSuccessfully: "Admin user has been successfully created..",
+  patientCreatedSuccessfully: "Admin user has been successfully created..",
   userLoggedIn: "User loggedIn successfully..",
   tokenRegenerated: "Tokens reGenerated successfully..",
   userLogout: "User logout successfully..",
@@ -43,4 +44,6 @@ export const successMessages = {
   patientsFetched: "All patients fetched successfully..",
   patientFetched: "Patient details fetched successfully..",
   disablePatient: "Patient is deleted successfully..",
+  enablePatient: "Patient is recovered successfully..",
+  userUpdate: "User info updated successfully..",
 };
