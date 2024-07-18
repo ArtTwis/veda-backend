@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import { verifyJwtToken } from "../middlewares/auth.middleware.js";
+import { setDefaultPassword } from "../middlewares/setDefaultPassword.middleware.js";
 import {
   changePassword,
   createAdminUser,
@@ -12,14 +13,8 @@ import {
 const router = Router();
 
 router
-  .route("/createAdmin")
-  .post(
-    [
-      body("email").trim().isEmail(),
-      body("password").trim().isLength({ min: 5 }),
-    ],
-    createAdminUser
-  );
+  .route("/create/:userType")
+  .post([body("email").trim().isEmail()], setDefaultPassword, createAdminUser);
 
 router
   .route("/login")
@@ -28,9 +23,9 @@ router
     loginUser
   );
 
-router.route("/regenerateToken").post(reGenerateAccessToken);
-
 router.route("/logout").post(verifyJwtToken, logoutUser);
+
+router.route("/regenerateToken").post(reGenerateAccessToken);
 
 router
   .route("/changePassword")

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { errorMessages } from "../constants/common.js";
+import { errorMessages } from "../constants/errorMessage.js";
 import ApiError from "../utils/ApiError.js";
 import { UserAuth } from "../models/userAuth.model.js";
 import { User } from "../models/user.model.js";
