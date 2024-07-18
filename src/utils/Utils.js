@@ -12,7 +12,7 @@ export const generateVedaUserId = async () => {
       });
 
     while (true) {
-      let user = await User.findById(generatedUserId);
+      let user = await User.findOne({ hospitalId: generatedUserId });
 
       if (user) {
         generatedUserId =
@@ -28,7 +28,7 @@ export const generateVedaUserId = async () => {
 
     return generatedUserId;
   } catch (error) {
-    console.log("error :>", error);
+    console.log(error);
     return false;
   }
 };
