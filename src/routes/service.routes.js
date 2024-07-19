@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { isAdmin, verifyJwtToken } from "../middlewares/auth.middleware.js";
 import {
   createDoctorService,
+  deleteService,
   getDoctorServices,
   updateService,
 } from "../controllers/service.controller.js";
@@ -30,5 +31,9 @@ router
 router
   .route("/service/:serviceId")
   .post(verifyJwtToken, isAdmin, updateService);
+
+router
+  .route("/service/:serviceId")
+  .delete(verifyJwtToken, isAdmin, deleteService);
 
 export default router;

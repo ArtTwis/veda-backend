@@ -19,6 +19,7 @@
 - post /api/v1/route/service/create( verifyJwtToken, isAdmin, createDoctorService )
 - post /api/v1/route/services/:userId ( verifyJwtToken, isAdmin, getDoctorServices )
 - patch /api/v1/admin/service/:serviceId ( verifyJwtToken, isAdmin, updateService )
+- delete /api/v1/admin/service/:serviceId ( verifyJwtToken, isAdmin, deleteService )
 
 - Appointment
 - post /api/v1/admin/appointment ( isAdmin, verifyUser, createAppointment )

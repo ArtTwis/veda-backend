@@ -40,4 +40,6 @@ export const errorMessages = {
     "Error: Failed to retrieved records due to a server-side error. Please try again later or contact the system administrator..",
   failedToUpdateService:
     "Error: Failed to update service due to a server-side error. Please try again later or contact the system administrator..",
+  failedToDeleteService:
+    "Error: Failed to delete service due to a server-side error. Please try again later or contact the system administrator..",
 };
