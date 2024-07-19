@@ -2,7 +2,13 @@
 
 <img src="https://qph.fs.quoracdn.net/main-qimg-5d2a45e5f6a3b88d7686aa13de992102"  width="300" />
 
-Rest API's implementation for the veda application
+> **Rest API's implementation for the veda application**
+
+## ER Diagram
+
+<img src="./veda-backend-ER-diagram.svg"  width="300" />
+
+> [ER Diagram code file](./veda-backend-ER-diagram-code.txt)
 
 ## Version 1.0
 
