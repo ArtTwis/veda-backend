@@ -10,6 +10,10 @@ const MedicalRecordSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    appointmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Appointment",
+    },
     diagnoses: {
       type: String,
       required: [true, "Patient diagnoses must required!!"],
@@ -28,7 +32,6 @@ const MedicalRecordSchema = new mongoose.Schema(
     procedure: {
       type: String,
       enum: ["SURGICAL", "MEDICAL"],
-      default: "MEDICAL",
     },
     description: {
       type: String,
