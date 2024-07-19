@@ -1,0 +1,102 @@
+userAuth [icon: lock, styleMode: watercolor, color: darkred] {
+  _id ObjectId PK
+  email string Required unique
+  password string Required
+  refreshToken string
+  isActive number
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+user [icon: user, styleMode: watercolor, color: green] {
+  _id ObjectId PK
+  userType enum "DOCTOR","PATIENT","ADMIN"
+  name string
+  guardianName string Optional
+  mobileNumber number Required
+  guardianMobileNumber number Optional
+  yearOfBirth number Required
+  dateOfBirth Date Optional
+  gender enum "Male","Female","Other"
+  email string Optional
+  addressLine1 string Required
+  addressCity string Required
+  addressState string Required
+  uniqueIdType enum "ADHAAR","DL","BHAMASHAH", "VOTERID" Optional
+  uniqueIdValue string Optional
+  bloodgroup string Optional
+  isActive number
+  userAuthId ObjectId userAuth FK
+  hospitalId string (vedaXXXXXXX) FK
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+doctor [icon: doctor, styleMode: watercolor, color: green] {
+  _id ObjectId PK
+  department enum "ENT","HEART","DENTAL","DERMATOLOGY","GENERAL" Required
+  totalExperience number Required
+  experiences Object[] Optional
+  degrees Object[] Required
+  hospitalId string (vedaXXXXXXX) FK
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+service [icon: heartbeat, styleMode: watercolor, color: darkgreen] {
+  _id ObjectId PK
+  name string Required
+  fees number Required
+  description string Optional
+  userId ObjectId User FK
+  hospitalId string (vedaXXXXXXX) FK
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+appointment [icon: calendar, styleMode: watercolor, color: skyblue] {
+  _id ObjectId PK
+  appointmentDateTime DateTime Required
+  patientId ObjectId User Required
+  doctorId ObjectId User Required
+  serviceId ObjectId service Required
+  appointmentStatus enum "SCHEDULED","CANCELLED","COMPLETED"
+  paymentStatus enum "PENDING", "PAID"
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+medicalRecord [icon: report, styleMode: watercolor, color: black] {
+  _id ObjectId PK
+  patientId ObjectId User FK
+  doctorId ObjectId User FK
+  appointmentId ObjectId Appointment FK
+  diagnosis string Required
+  treatment string Optional
+  labTests string[] Optional
+  procedure enum "SURGICAL","MEDICAL"
+  description string Optional
+  prescription string Optional
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+
+userAuth._id  - user.userAuthId
+userAuth.email - user.email
+
+user.hospitalId - doctor.hospitalId
+
+service.userId  - user._id
+service.hospitalId  - user.hospitalId
+
+appointment.patientId - user._id
+appointment.doctorId - user._id
+appointment.serviceId - service._id
+
+medicalRecord.patientId  - user._id
+medicalRecord.doctorId - user._id
+medicalRecord.appointmentId - appointment._id
+
+
+
