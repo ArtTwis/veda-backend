@@ -136,7 +136,7 @@ export const createUser = asyncHandler(async (req, res) => {
         degrees,
         totalExperience,
         experiences,
-        userAuthId: UserResponse._id,
+        userId: UserResponse._id,
         hospitalId: generatedUserId,
       });
 
@@ -276,8 +276,16 @@ export const getUserDetails = asyncHandler(async (req, res) => {
           $lookup: {
             from: "doctors",
             localField: "_id",
-            foreignField: "userAuthId",
+            foreignField: "userId",
             as: "experienceInfo",
+          },
+        },
+        {
+          $lookup: {
+            from: "services",
+            localField: "_id",
+            foreignField: "userId",
+            as: "services",
           },
         },
         {

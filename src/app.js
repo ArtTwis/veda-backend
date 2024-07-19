@@ -45,9 +45,11 @@ app.use(cookieParser());
 
 import userAuthRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
+import serviceRouter from "./routes/service.routes.js";
 
 app.use(`/api/${process.env.VEDA_API_VERSION}/auth`, userAuthRouter);
 app.use(`/api/${process.env.VEDA_API_VERSION}/route`, userRouter);
+app.use(`/api/${process.env.VEDA_API_VERSION}/route`, serviceRouter);
 
 //  Handle invalid request
 app.use(notFoundMiddleware);

@@ -32,6 +32,10 @@ export const errorMessages = {
     "Error: Failed to update password due to a server-side error. Please try again later or contact the system administrator..",
   failedToGenerateUserId:
     "Error: Failed to generate a user ID due to a server-side error. Please try again later or contact the system administrator..",
+  failedToCreateService:
+    "Error: Failed to create doctor service due to a server-side error. Please try again later or contact the system administrator..",
   userNotFound:
     "Error: No user found with the provided detail. Please try again or contact the system administrator..",
+  failedToRetrievedRecords:
+    "Error: Failed to retrieved records due to a server-side error. Please try again later or contact the system administrator..",
 };

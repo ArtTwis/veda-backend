@@ -15,9 +15,17 @@ const ServiceSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    doctorId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    hospitalId: {
+      type: String,
+      required: [
+        true,
+        "Error: The 'hospitalId' field is required to complete this request. Please provide a valid hospital ID..",
+      ],
+      trim: true,
     },
   },
   {
@@ -25,4 +33,4 @@ const ServiceSchema = new mongoose.Schema(
   }
 );
 
-export default Service = mongoose.model("Service", ServiceSchema);
+export const Service = mongoose.model("Service", ServiceSchema);

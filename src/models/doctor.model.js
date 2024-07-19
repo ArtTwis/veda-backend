@@ -32,7 +32,7 @@ const DoctorSchema = new mongoose.Schema(
     },
     experiences: [ExperienceSchema],
     degrees: [DegreeSchema],
-    userAuthId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
