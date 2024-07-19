@@ -6,7 +6,7 @@
 
 ## ER Diagram
 
-<img src="./veda-backend-ER-diagram.svg"  width="300" />
+![DB Models - ER Diagram](./veda-backend-ER-diagram.svg)
 
 > [ER Diagram code file](./veda-backend-ER-diagram-code.txt)
 
