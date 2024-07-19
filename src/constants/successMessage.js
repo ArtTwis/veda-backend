@@ -6,7 +6,8 @@ export const successMessages = {
   tokenRefreshed: "Tokens reissued..",
   loggedOutSuccess: "Session ended..",
   passwordChanged: "Password modification successful..",
-  recordsRetrieved: "User data retrieved successfully..",
+  recordsRetrieved: "Data retrieved successfully..",
+  recordUpdated: "Data updated successfully..",
   userAccountDisabled:
     "User account temporarily disabled. They will not be able to access the system until re-enabled..",
   userAccountEnabled:

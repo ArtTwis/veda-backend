@@ -4,6 +4,7 @@ import { isAdmin, verifyJwtToken } from "../middlewares/auth.middleware.js";
 import {
   createDoctorService,
   getDoctorServices,
+  updateService,
 } from "../controllers/service.controller.js";
 
 const router = Router();
@@ -25,5 +26,9 @@ router
 router
   .route("/services/:userId")
   .post(verifyJwtToken, isAdmin, getDoctorServices);
+
+router
+  .route("/service/:serviceId")
+  .post(verifyJwtToken, isAdmin, updateService);
 
 export default router;

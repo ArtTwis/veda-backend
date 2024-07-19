@@ -27,3 +27,4 @@ Rest API's implementation for the veda application
 
 - post /api/v1/route/service/create( verifyJwtToken, isAdmin, createDoctorService )
 - post /api/v1/route/services/:userId ( verifyJwtToken, isAdmin, getDoctorServices )
+- patch /api/v1/admin/service/:serviceId ( verifyJwtToken, isAdmin, updateService )

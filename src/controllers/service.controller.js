@@ -81,3 +81,44 @@ export const getDoctorServices = asyncHandler(async (req, res) => {
       .json(new ApiError(417, errorMessages.internalServerError));
   }
 });
+
+export const updateService = asyncHandler(async (req, res) => {
+  try {
+    let { serviceId } = req.params;
+
+    if (!serviceId) {
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingParameter));
+    }
+
+    let updatingFields = {};
+
+    Object.keys(req.body).forEach((field) => {
+      updatingFields[field] = req.body[field];
+    });
+
+    const ServiceResponse = await Service.findByIdAndUpdate(
+      serviceId,
+      { $set: updatingFields },
+      { new: true }
+    );
+
+    if (!ServiceResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.failedToUpdateService));
+    }
+
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(201, ServiceResponse, successMessages.recordUpdated)
+      );
+  } catch (error) {
+    console.log("error :>>", error);
+    return res
+      .status(417)
+      .json(new ApiError(417, errorMessages.internalServerError));
+  }
+});
