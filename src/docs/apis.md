@@ -23,8 +23,6 @@
 
 - Appointment
 - post /api/v1/route/appointment/create ( verifyJwtToken, isAdmin, createAppointment )
-
-- put /api/v1/admin/appointment/:appointmentId ( isAdmin, verifyUser, updateAppointmentDetail )
-- get /api/v1/admin/appointments ( isAdmin, verifyUser, getAllAppointments )
-- get /api/v1/admin/appointment/:appointmentId ( verifyUser, getAppointmentDetail )
-- delete /api/v1/admin/appointment/:appointmentId ( isAdmin, verifyUser, deleteAppointmentRecord )
+- patch /api/v1/route/appointment/update/paymentStatus/:appointmentId ( verifyJwtToken, isAdmin, updatePaymentStatus )
+- patch /api/v1/route/appointment/update/appointmentStatus/:appointmentId ( verifyJwtToken, isAdmin, updateAppointmentStatus )
+- get /api/v1/route/appointments ( isAdmin, verifyUser, getAllAppointments )

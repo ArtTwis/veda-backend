@@ -93,3 +93,167 @@ export const createAppointment = asyncHandler(async (req, res) => {
       .json(new ApiError(417, errorMessages.internalServerError));
   }
 });
+
+export const updatePaymentStatus = asyncHandler(async (req, res) => {
+  try {
+    const validateResult = validationResult(req).array();
+
+    if (validateResult.length > 0) {
+      return res
+        .status(422)
+        .json(new ApiError(422, validateResult || errorMessages.invalidInput));
+    }
+
+    const { appointmentId } = req.params;
+
+    if (!appointmentId) {
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingField));
+    }
+
+    const { paymentStatus } = req.body;
+
+    if (!paymentStatus) {
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingField));
+    }
+
+    const AppointmentResponse = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { $set: { paymentStatus } },
+      { new: true }
+    );
+
+    if (!AppointmentResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.failedToUpdateAppointment));
+    }
+
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(201, AppointmentResponse, successMessages.recordUpdated)
+      );
+  } catch (error) {
+    console.log("error :>>", error);
+    return res
+      .status(417)
+      .json(new ApiError(417, errorMessages.internalServerError));
+  }
+});
+
+export const updateAppointmentStatus = asyncHandler(async (req, res) => {
+  try {
+    const validateResult = validationResult(req).array();
+
+    if (validateResult.length > 0) {
+      return res
+        .status(422)
+        .json(new ApiError(422, validateResult || errorMessages.invalidInput));
+    }
+
+    const { appointmentId } = req.params;
+
+    if (!appointmentId) {
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingParameter));
+    }
+
+    const { appointmentStatus } = req.body;
+
+    if (!appointmentStatus) {
+      return res
+        .status(400)
+        .json(new ApiError(400, errorMessages.missingField));
+    }
+
+    const AppointmentResponse = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { $set: { appointmentStatus } },
+      { new: true }
+    );
+
+    if (!AppointmentResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.failedToUpdateAppointment));
+    }
+
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(201, AppointmentResponse, successMessages.recordUpdated)
+      );
+  } catch (error) {
+    console.log("error :>>", error);
+    return res
+      .status(417)
+      .json(new ApiError(417, errorMessages.internalServerError));
+  }
+});
+
+export const getAllAppointments = asyncHandler(async (req, res) => {
+  try {
+    const AppointmentResponse = await Appointment.aggregate([
+      {
+        $lookup: {
+          from: "services",
+          localField: "serviceId",
+          foreignField: "_id",
+          as: "service",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "doctor",
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "doctorId",
+          foreignField: "_id",
+          as: "doctor",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "patientId",
+          foreignField: "_id",
+          as: "patient",
+        },
+      },
+    ]);
+
+    if (!AppointmentResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.failedToRetrievedRecords));
+    }
+
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          AppointmentResponse,
+          successMessages.recordsRetrieved
+        )
+      );
+  } catch (error) {
+    console.log("error :>>", error);
+    return res
+      .status(417)
+      .json(new ApiError(417, errorMessages.internalServerError));
+  }
+});

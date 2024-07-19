@@ -33,3 +33,6 @@ Rest API's implementation for the veda application
 ### Appointment
 
 - post /api/v1/route/appointment/create ( verifyJwtToken, isAdmin, createAppointment )
+- patch /api/v1/route/appointment/update/paymentStatus/:appointmentId ( verifyJwtToken, isAdmin, updatePaymentStatus )
+- patch /api/v1/route/appointment/update/appointmentStatus/:appointmentId ( verifyJwtToken, isAdmin, updateAppointmentStatus )
+- get /api/v1/route/appointments ( isAdmin, verifyUser, getAllAppointments )
