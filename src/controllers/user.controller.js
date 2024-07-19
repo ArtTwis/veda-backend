@@ -245,6 +245,26 @@ export const getUserDetails = asyncHandler(async (req, res) => {
             localField: "_id",
             foreignField: "patientId",
             as: "appointments",
+            pipeline: [
+              {
+                $lookup: {
+                  from: "services",
+                  localField: "serviceId",
+                  foreignField: "_id",
+                  as: "service",
+                  pipeline: [
+                    {
+                      $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "doctor",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
           },
         },
       ]);
@@ -292,8 +312,28 @@ export const getUserDetails = asyncHandler(async (req, res) => {
           $lookup: {
             from: "appointments",
             localField: "_id",
-            foreignField: "patientId",
+            foreignField: "doctorId",
             as: "appointments",
+            pipeline: [
+              {
+                $lookup: {
+                  from: "services",
+                  localField: "serviceId",
+                  foreignField: "_id",
+                  as: "service",
+                  pipeline: [
+                    {
+                      $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "doctor",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
           },
         },
       ]);

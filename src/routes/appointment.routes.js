@@ -10,7 +10,7 @@ router
   .post(
     [
       body("patientId").trim().notEmpty(),
-      body("hospitalId").trim().notEmpty(),
+      body("doctorId").trim().notEmpty(),
       body("serviceId").trim().notEmpty(),
       body("paymentStatus").trim().notEmpty(),
     ],

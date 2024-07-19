@@ -18,21 +18,16 @@ export const createAppointment = asyncHandler(async (req, res) => {
         .json(new ApiError(422, validateResult || errorMessages.invalidInput));
     }
 
-    let {
-      appointmentDateTime,
-      patientId,
-      hospitalId,
-      serviceId,
-      paymentStatus,
-    } = req.body;
+    let { appointmentDateTime, patientId, doctorId, serviceId, paymentStatus } =
+      req.body;
 
-    if (!(patientId && serviceId && paymentStatus && hospitalId)) {
+    if (!(patientId && serviceId && paymentStatus && doctorId)) {
       return res
         .status(400)
         .json(new ApiError(400, errorMessages.missingField));
     }
 
-    if (!appointmentDateTime) {
+    if (!appointmentDateTime || appointmentDateTime === "") {
       appointmentDateTime = Date.now();
     }
 
@@ -44,12 +39,21 @@ export const createAppointment = asyncHandler(async (req, res) => {
         .json(new ApiError(500, errorMessages.invalidFieldValues));
     }
 
-    const UserResponse = await User.findOne({
+    const PatientUserResponse = await User.findOne({
       _id: patientId,
-      hospitalId: hospitalId,
     }).select("_id");
 
-    if (!UserResponse) {
+    if (!PatientUserResponse) {
+      return res
+        .status(500)
+        .json(new ApiError(500, errorMessages.invalidFieldValues));
+    }
+
+    const DoctorUserResponse = await User.findOne({
+      _id: doctorId,
+    }).select("_id");
+
+    if (!DoctorUserResponse) {
       return res
         .status(500)
         .json(new ApiError(500, errorMessages.invalidFieldValues));
@@ -58,7 +62,7 @@ export const createAppointment = asyncHandler(async (req, res) => {
     const AppointmentResponse = await Appointment.create({
       appointmentDateTime,
       patientId,
-      hospitalId,
+      doctorId,
       serviceId,
       paymentStatus,
     });
@@ -75,7 +79,7 @@ export const createAppointment = asyncHandler(async (req, res) => {
         {
           appointmentDateTime: Date.now(),
           patientId,
-          hospitalId,
+          doctorId,
           serviceId,
           paymentStatus,
         },

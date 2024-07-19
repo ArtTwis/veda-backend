@@ -5,15 +5,14 @@ const AppointmentSchema = new mongoose.Schema(
     appointmentDateTime: {
       type: String,
       required: [true, "Appointment datetime must required!!"],
-      default: Date.now(),
     },
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    hospitalId: {
-      type: String,
-      required: true,
+    doctorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     serviceId: {
       type: mongoose.Schema.Types.ObjectId,
