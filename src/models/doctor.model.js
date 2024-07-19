@@ -22,10 +22,6 @@ const DegreeSchema = new mongoose.Schema({
 
 const DoctorSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
     department: {
       type: String,
       enum: ["ENT", "HEART", "DENTAL", "DERMATOLOGY", "GENERAL"],
@@ -38,7 +34,7 @@ const DoctorSchema = new mongoose.Schema(
     degrees: [DegreeSchema],
     userAuthId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserAuth",
+      ref: "User",
     },
     hospitalId: {
       type: String,

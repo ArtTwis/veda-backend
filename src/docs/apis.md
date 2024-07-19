@@ -7,19 +7,13 @@
 - post /api/v1/auth/logout ( verifyUser, logoutUser )
 - put /api/v1/auth/change-password ( verifyUser, chnagePassword )
 
-- Patient
-- post /api/v1/route/patient ( isAdmin, verifyUser, createPatient )
-- post /api/v1/route/patients ( isAdmin, verifyUser, getAllPatients )
-- post /api/v1/route/patient/:patientId ( verifyUser, getPatientDetail )
-- delete /api/v1/route/patient/:patientId ( isAdmin, verifyUser, deletePatientRecord )
-- put /api/v1/route/patient/:patientId ( isAdmin, verifyUser, updatePatientDetail )
-
-- Doctor
-- post /api/v1/admin/doctor ( isAdmin, verifyUser, createDoctor )
-- put /api/v1/admin/doctor/:doctorId ( isAdmin, verifyUser, updateDoctorDetail )
-- get /api/v1/admin/doctors ( isAdmin, verifyUser, getAllDoctors )
-- get /api/v1/admin/doctor/:doctorId ( verifyUser, getDoctorDetail )
-- delete /api/v1/admin/doctor/:doctorId ( isAdmin, verifyUser, deleteDoctorRecord )
+- User
+- post /api/v1/route/user/create/:userType ( verifyJwtToken, isAdmin, setDefaultPassword, createUser)
+- post /api/v1/route/user/:userType ( verifyUser, isAdmin, getAllUsers )
+- post /api/v1/route/user/:userType/:userId ( verifyUser, getUserDetails )
+- patch /api/v1/route/user/disable/:userType/:userId ( verifyUser, isAdmin, disableUser )
+- patch /api/v1/route/user/enable/:userType/:userId ( verifyUser, isAdmin, enableUser )
+- patch /api/v1/route/user/update/:userType/:userId ( verifyUser, isAdmin, updateUserInfo )
 
 - Appointment
 - post /api/v1/admin/appointment ( isAdmin, verifyUser, createAppointment )
