@@ -5,7 +5,6 @@ import ApiError from "../utils/ApiError.js";
 import { Service } from "../models/service.model.js";
 import { successMessages } from "../constants/successMessage.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import mongoose from "mongoose";
 
 export const createDoctorService = asyncHandler(async (req, res) => {
   try {

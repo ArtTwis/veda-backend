@@ -2,23 +2,29 @@ import mongoose from "mongoose";
 
 const AppointmentSchema = new mongoose.Schema(
   {
+    appointmentDateTime: {
+      type: String,
+      required: [true, "Appointment datetime must required!!"],
+      default: Date.now(),
+    },
+    patientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    hospitalId: {
+      type: String,
+      required: true,
+    },
     serviceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
     },
-    paymentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Payment",
-    },
-    patientId: {
+    paymentStatus: {
       type: String,
+      enum: ["PENDING", "PAID", "REFUND"],
       required: true,
     },
-    appointmentDateTime: {
-      type: String,
-      required: [true, "Appointment datetime must required!!"],
-    },
-    status: {
+    appointmentStatus: {
       type: String,
       enum: ["SCHEDULED", "CANCELLED", "COMPLETED"],
     },
@@ -28,4 +34,4 @@ const AppointmentSchema = new mongoose.Schema(
   }
 );
 
-export default Appointment = mongoose.model("Appointment", AppointmentSchema);
+export const Appointment = mongoose.model("Appointment", AppointmentSchema);

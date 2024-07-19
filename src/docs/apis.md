@@ -22,7 +22,8 @@
 - delete /api/v1/admin/service/:serviceId ( verifyJwtToken, isAdmin, deleteService )
 
 - Appointment
-- post /api/v1/admin/appointment ( isAdmin, verifyUser, createAppointment )
+- post /api/v1/route/appointment/create ( verifyJwtToken, isAdmin, createAppointment )
+
 - put /api/v1/admin/appointment/:appointmentId ( isAdmin, verifyUser, updateAppointmentDetail )
 - get /api/v1/admin/appointments ( isAdmin, verifyUser, getAllAppointments )
 - get /api/v1/admin/appointment/:appointmentId ( verifyUser, getAppointmentDetail )

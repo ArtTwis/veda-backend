@@ -2,6 +2,7 @@ export const successMessages = {
   newAdminCreated: "User account created successfully..",
   newUserCreated: "User account created successfully..",
   newServiceCreated: "Doctor service created successfully..",
+  newAppointmentCreated: "Appointment created successfully..",
   loginSuccess: "Authentication successful..",
   tokenRefreshed: "Tokens reissued..",
   loggedOutSuccess: "Session ended..",

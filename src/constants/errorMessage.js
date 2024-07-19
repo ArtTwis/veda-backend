@@ -22,6 +22,8 @@ export const errorMessages = {
     "Error: Refresh token is invalid or has expired. Please log in to obtain a new token..",
   invalidAccessToken:
     "Error: Invalid access token. Please authenticate again to obtain a new token..",
+  invalidFieldValues:
+    "Error: Invalid required field values. Please double-check or contact the system administrator..",
   expiredRefreshToken:
     "Error: Refresh token is invalid or has expired. Please log in to obtain a new token..",
   failedToGenerateNewTokens:
@@ -42,4 +44,10 @@ export const errorMessages = {
     "Error: Failed to update service due to a server-side error. Please try again later or contact the system administrator..",
   failedToDeleteService:
     "Error: Failed to delete service due to a server-side error. Please try again later or contact the system administrator..",
+  failedToCreateAppointment:
+    "Error: Failed to create appointment due to a server-side error. Please try again later or contact the system administrator..",
+  failedToUpdateAppointment:
+    "Error: Failed to update appointment due to a server-side error. Please try again later or contact the system administrator..",
+  failedToDeleteAppointment:
+    "Error: Failed to delete appointment due to a server-side error. Please try again later or contact the system administrator..",
 };
